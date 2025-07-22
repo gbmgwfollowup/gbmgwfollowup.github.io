@@ -10,9 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Fermi-GBM GW follow-up</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <script src="js/bootstrap.min.js"></script>
-
     <style>
         table {
 	    border-collapse: collapse;
@@ -82,68 +79,68 @@
 
 <script type="text/javascript" class="init">
 
-$(document).ready(function() {
+  $(document).ready(function() {
 
-    // DataTable object
-    const table = $('#public_table').DataTable({
+      // DataTable object
+      const table = $('#public_table').DataTable({
 
-	"lengthMenu": [ [15, 50, 100, -1], [15, 50, 100, "All"] ],
-	"pagingType": "simple",
-	scrollY: 400,
-	scrollCollapse: true,
-	order: [[ 2, 'desc' ]],
-	ajax: { url: '/publicData'},
-	columns: [
-            {
-		data: 'id',
-		'render': function(data, type, row, meta){
-		    if(type === 'display'){
-			data = '<a href="' + row['gracedb'] + '">'+ data + '</a>';
-		    }        
-		    return data;
-		},
-	    },
-	    { data: 'run_id', name: 'run_id', visible: false},
-	    { data: 'time_gps', name: 'time_gps'},
-	    { data: 'time_fermi', name: 'time_fermi'},
-	    { data: 'time_iso', name: 'time_iso'},
-	    { data: 'significant', name: 'significant', visible: false},
-	    { data: 'far'},
-            { data: 'type'},
-	    { data: 'pastro'},
-	    { data: 'plots'}
-	]
-    })
+	  "lengthMenu": [ [15, 50, 100, -1], [15, 50, 100, "All"] ],
+	  "pagingType": "simple",
+	  scrollY: 400,
+	  scrollCollapse: true,
+	  order: [[ 2, 'desc' ]],
+	  ajax: "https://github.com/gbmgwfollowup/gbmgwfollowup.github.io/blob/main/public_table_data.json",
+	  columns: [
+              {
+		  data: 'id',
+		  'render': function(data, type, row, meta){
+		      if(type === 'display'){
+			  data = '<a href="' + row['gracedb'] + '">'+ data + '</a>';
+		      }        
+		      return data;
+		  },
+	      },
+	      { data: 'run_id', name: 'run_id', visible: false},
+	      { data: 'time_gps', name: 'time_gps'},
+	      { data: 'time_fermi', name: 'time_fermi'},
+	      { data: 'time_iso', name: 'time_iso'},
+	      { data: 'significant', name: 'significant', visible: false},
+	      { data: 'far'},
+              { data: 'type'},
+	      { data: 'pastro'},
+	      { data: 'plots'}
+	  ]
+      })
 
-    // by default, the O4c superevents are shown
-    table.column('run_id:name').search('O4c').draw();
-    
-    // listener for run selection
-    $('#run_id_dropdown').on('change', function () {
-	run_id_displayed = $(this).val();
-	if (run_id_displayed === 'all') {
-	    table.column('run_id:name').search('O4c|O4b|O4a|ER16|ER15|O3', true, false).draw();
-	}
-	else {
-	    table.column('run_id:name').search(run_id_displayed).draw();
-	}
-    });
-    
-    // by default, the significant superevents are shown
-    table.column('significant:name').search('True').draw();
-    
-    // listener for significant superevents selection
-    $('#superevent_dropdown').on('change', function () {
-	superevent_displayed = $(this).val();
-	if (superevent_displayed === 'significant') {
-	    table.column('significant:name').search('True').draw();
-	} else if (superevent_displayed === 'low_significance') {
-	    table.column('significant:name').search('False').draw();
-	} else {
-	    table.column('significant:name').search('True|False', true, false).draw();
-	}	
-    });
+      // by default, the O4c superevents are shown
+      table.column('run_id:name').search('O4c').draw();
+      
+      // listener for run selection
+      $('#run_id_dropdown').on('change', function () {
+	  run_id_displayed = $(this).val();
+	  if (run_id_displayed === 'all') {
+	      table.column('run_id:name').search('O4c|O4b|O4a|ER16|ER15|O3', true, false).draw();
+	  }
+	  else {
+	      table.column('run_id:name').search(run_id_displayed).draw();
+	  }
+      });
+      
+      // by default, the significant superevents are shown
+      table.column('significant:name').search('True').draw();
+      
+      // listener for significant superevents selection
+      $('#superevent_dropdown').on('change', function () {
+	  superevent_displayed = $(this).val();
+	  if (superevent_displayed === 'significant') {
+	      table.column('significant:name').search('True').draw();
+	  } else if (superevent_displayed === 'low_significance') {
+	      table.column('significant:name').search('False').draw();
+	  } else {
+	      table.column('significant:name').search('True|False', true, false).draw();
+	  }	
+      });
 
-});
+  });
 </script>
 </body>
