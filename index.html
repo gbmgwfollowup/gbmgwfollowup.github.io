@@ -1,146 +1,138 @@
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/dataTables.bootstrap5.min.css">
-<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Fermi-GBM GW follow-up</title>
-    <style>
-        table {
-	    border-collapse: collapse;
-	    width: 100%;
-	}
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Fermi-GBM GW follow-up</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
 
-	th, td {
-	    padding: 8px;
-	    text-align: left;
-	    border-bottom: 1px solid #DDD;
-	}
+		th,
+		td {
+			padding: 8px;
+			text-align: left;
+			border-bottom: 1px solid #DDD;
+		}
 
-	tr:nth-child(even) {
-	    background-color: #f2f2f2;
-	}
-      
-	tr:hover {background-color: #D6EEEE;}
-    </style>
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+
+		tr:hover {
+			background-color: #D6EEEE;
+		}
+	</style>
 </head>
 
 <body>
-    <h1>Fermi-GBM GW follow-up</h1>
-
-    <div style="margin-top:2%;"></div>
-  
-    <!-- dropdown menu for run selection -->
-    <label for="run_id_dropdown">Public Events:</label>
-    <select id="run_id_dropdown">
-        <option value="O4c">O4c</option>
-	<option value="O4b">O4b</option>
-	<option value="O4a">O4a</option>
-	<option value="ER16">ER16</option>
-	<option value="ER15">ER15</option>
-	<option value="O3">O3</option>
-	<option value="all">All</option>
-    </select>
-  
-    <div style="margin-top:0.5%;"></div>
-
-    <!-- dropdown menu for significant superevents selection -->
-    <label for="superevent_dropdown">Events:</label>
-    <select id="superevent_dropdown">
-        <option value="significant">Significant</option>
-        <option value="low_significance">Low significance</option>
-	<option value="all">All</option>
-    </select>
-  
-    <div style="margin-top:2%;"></div>
-
-    <!-- table -->
-    <table id="public_table" style="width:100%;">
-        <thead>
-            <tr>
-               <th scope="col">Superevent ID</th>
-   	       <th scope="col">Run ID</th>
-	       <th scope="col">Time (GPS)</th>
-	       <th scope="col">Time (MET)</th>
-	       <th scope="col">Time (UTC)</th>
-	       <th scope="col">Significant</th>
-	       <th scope="col">FAR [Hz]</th>
-               <th scope="col">Classification</th>
-	       <th scope="col">P-astro [%]</th>
-               <th scope="col">Plots</th>
-	    </tr>
-        </thead>
-    </table>
-
-<script type="text/javascript" class="init">
-
-  $(document).ready(function() {
-
-      // DataTable object
-      const table = $('#public_table').DataTable({
-
-	  "lengthMenu": [ [15, 50, 100, -1], [15, 50, 100, "All"] ],
-	  "pagingType": "simple",
-	  scrollY: 400,
-	  scrollCollapse: true,
-	  order: [[ 2, 'desc' ]],
-	  ajax: "https://raw.githubusercontent.com/gbmgwfollowup/gbmgwfollowup.github.io/main/public_table_data.json",
-	  columns: [
-              {
-		  data: 'id',
-		  'render': function(data, type, row, meta){
-		      if(type === 'display'){
-			  data = '<a href="' + row['gracedb'] + '">'+ data + '</a>';
-		      }        
-		      return data;
-		  },
-	      },
-	      { data: 'run_id', name: 'run_id', visible: false},
-	      { data: 'time_gps', name: 'time_gps'},
-	      { data: 'time_fermi', name: 'time_fermi'},
-	      { data: 'time_iso', name: 'time_iso'},
-	      { data: 'significant', name: 'significant', visible: false},
-	      { data: 'far'},
-              { data: 'type'},
-	      { data: 'pastro'},
-	      { data: 'plots'}
-	  ]
-      })
-
-      // by default, the O4c superevents are shown
-      table.column('run_id:name').search('O4c').draw();
-      
-      // listener for run selection
-      $('#run_id_dropdown').on('change', function () {
-	  run_id_displayed = $(this).val();
-	  if (run_id_displayed === 'all') {
-	      table.column('run_id:name').search('O4c|O4b|O4a|ER16|ER15|O3', true, false).draw();
-	  }
-	  else {
-	      table.column('run_id:name').search(run_id_displayed).draw();
-	  }
-      });
-      
-      // by default, the significant superevents are shown
-      table.column('significant:name').search('True').draw();
-      
-      // listener for significant superevents selection
-      $('#superevent_dropdown').on('change', function () {
-	  superevent_displayed = $(this).val();
-	  if (superevent_displayed === 'significant') {
-	      table.column('significant:name').search('True').draw();
-	  } else if (superevent_displayed === 'low_significance') {
-	      table.column('significant:name').search('False').draw();
-	  } else {
-	      table.column('significant:name').search('True|False', true, false).draw();
-	  }	
-      });
-
-  });
-</script>
+	<h1>Fermi-GBM GW follow-up</h1>
+	<div style="margin-top:2%;"></div>
+	<!-- dropdown menu for run selection -->
+	<label for="run_id_dropdown">Public Events:</label>
+	<select id="run_id_dropdown">
+		<option value="O4c">O4c</option>
+		<option value="O4b">O4b</option>
+		<option value="O4a">O4a</option>
+		<option value="ER16">ER16</option>
+		<option value="ER15">ER15</option>
+		<option value="O3">O3</option>
+		<option value="all">All</option>
+	</select>
+	<div style="margin-top:0.5%;"></div>
+	<!-- dropdown menu for significant superevents selection -->
+	<label for="superevent_dropdown">Events:</label>
+	<select id="superevent_dropdown">
+		<option value="significant">Significant</option>
+		<option value="low_significance">Low significance</option>
+		<option value="all">All</option>
+	</select>
+	<div style="margin-top:2%;"></div>
+	<!-- table -->
+	<table id="table" style="width:100%;">
+		<thead>
+			<tr>
+				<th scope="col">Superevent ID</th>
+				<th scope="col">Run ID</th>
+				<th scope="col">Time (GPS)</th>
+				<th scope="col">Time (MET)</th>
+				<th scope="col">Time (UTC)</th>
+				<th scope="col">Significant</th>
+				<th scope="col">FAR [Hz]</th>
+				<th scope="col">Classification</th>
+				<th scope="col">P-astro [%]</th>
+				<th scope="col">Plots</th>
+			</tr>
+		</thead>
+	</table>
+	<script type="text/javascript" , src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script type="text/javascript" , src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" class="init">
+		$(document).ready(function () {
+			// DataTable object
+			const table = $('#table').DataTable({
+				"lengthMenu": [[15, 50, 100, -1], [15, 50, 100, "All"]],
+				"pagingType": "simple",
+				scrollY: 400,
+				scrollCollapse: true,
+				order: [[2, 'desc']],
+				ajax: {
+					url: "table_data.json",
+					dataSrc: ''
+				},
+				columns: [
+					{
+						data: 'id',
+						'render': function (data, type, row, meta) {
+							if (type === 'display') {
+								data = '<a href="' + row['gracedb'] + '">' + data + '</a>';
+							}
+							return data;
+						},
+					},
+					{ data: 'run_id', name: 'run_id', visible: false },
+					{ data: 'time_gps', name: 'time_gps' },
+					{ data: 'time_fermi', name: 'time_fermi' },
+					{ data: 'time_iso', name: 'time_iso' },
+					{ data: 'significant', name: 'significant', visible: false },
+					{ data: 'far' },
+					{ data: 'type' },
+					{ data: 'pastro' },
+					{ data: 'plots' }
+				]
+			})
+			// by default, the O4c superevents are shown
+			table.column('run_id:name').search('O4c').draw();
+			// listener for run selection
+			$('#run_id_dropdown').on('change', function () {
+				run_id_displayed = $(this).val();
+				if (run_id_displayed === 'all') {
+					table.column('run_id:name').search('O4c|O4b|O4a|ER16|ER15|O3', true, false).draw();
+				}
+				else {
+					table.column('run_id:name').search(run_id_displayed).draw();
+				}
+			});
+			// by default, the significant superevents are shown
+			table.column('significant:name').search('True').draw();
+			// listener for significant superevents selection
+			$('#superevent_dropdown').on('change', function () {
+				superevent_displayed = $(this).val();
+				if (superevent_displayed === 'significant') {
+					table.column('significant:name').search('True').draw();
+				} else if (superevent_displayed === 'low_significance') {
+					table.column('significant:name').search('False').draw();
+				} else {
+					table.column('significant:name').search('True|False', true, false).draw();
+				}
+			});
+		});
+	</script>
 </body>
